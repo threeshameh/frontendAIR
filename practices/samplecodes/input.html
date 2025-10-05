@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AirVision — Air Quality Checker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="header">
+    <div class="container">
+      <div class="logo">AirVISION</div>
+      <nav class="nav">
+        <a href="home.html">Home</a>
+        <a href="#">About Us</a>
+        <a href="#">Services</a>
+        <a href="#">Blog</a>
+        <a href="#">Contact Us</a>
+      </nav>
+      <div class="menu-icon">☰</div>
+    </div>
+  </header>
+  <div class="rectangle-container">
+   <header class="input-header">
+      <h1>Check Your Air Quality</h1>
+      <p>Answer a few questions about your environment to get personalized air quality insights.</p>
+    </header>
+
+    <section class="live-analysis">
+      <h2>Live Analysis</h2>
+      <div class="score-container">
+        <div class="score-info">
+          <span class="emoji">😊</span>
+          <h3>Excellent Air Quality</h3>
+          <p>Score: <strong>83/100</strong></p>
+          <p class="note">Perfect conditions for outdoor activities!</p>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">✅ Fine Particulate Matter: <strong>15 µg/m³</strong></div>
+          <div class="metric">✅ Coarse Particulate Matter: <strong>25 µg/m³</strong></div>
+          <div class="metric">✅ Nitrogen Oxides / Dioxide: <strong>21 ppb</strong></div>
+          <div class="metric">✅ Sulfur Dioxide: <strong>10 ppb</strong></div>
+          <div class="metric">✅ Volatile Organic Compounds: <strong>50 µg/m³</strong></div>
+          <div class="metric">✅ Carbon Monoxide: <strong>1 ppm</strong></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  
+  <!--Input Form-->
+  <title>Air Quality Checker</title>
+  <style>
+/* styles.css */
+/* styles.css */
+/* Input header section */
+.input-header {
+  background-color: #ffffff; /* Soft teal tint */
+  padding: 30px 20px;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 800px;
+}
+
+/* Form card */
+.input-card {
+  background-color: #ebf1f1;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  max-width: 600px;
+  margin: 20px 0 20px 40px; /* Top, Right, Bottom, Left */
+}
+
+ .pollutant-header {
+  background-color: #bfd3e0; /* Light neutral background */
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+}
+  </style>
+ <div class="input-card">
+    <h1>🌿 Environmental Assessment</h1>
+    <p>Adjust the sliders to describe your surroundings and assess your air quality.</p>
+
+    <div id="form-area"></div>
+
+    <button id="check-btn">Analyze My Air Quality</button>
+
+    <div id="result"></div>
+
+    <div id="tips" class="tips-box" style="display:none;">
+      <h3>Quick Tips</h3>
+      <ul id="tips-list"></ul>
+
+      <h3>Health Protection</h3>
+      <ul>
+        <li>Use filters to reduce exposure during high pollution.</li>
+        <li>Use indoor purifiers to limit pollutants.</li>
+        <li>Close windows and doors to reduce air pollutants.</li>
+        <li>Avoid outdoor activities when air quality is poor.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const pollutants = [
+      {
+        id: 'pm25',
+        question: 'Is the air around you hazy or clear?',
+        technical: 'Fine Particulate Matter (PM2.5)',
+        value: 23,
+        unit: 'μg/m³',
+        maxValue: 100
+      },
+      {
+        id: 'pm10',
+        question: 'Do you notice a lot of dust outside?',
+        technical: 'Coarse Particulate Matter (PM10)',
+        value: 29,
+        unit: 'μg/m³',
+        maxValue: 150
+      },
+      {
+        id: 'nox',
+        question: 'Are there many vehicles or factories nearby?',
+        technical: 'Nitrogen Oxides (NOx)',
+        value: 28,
+        unit: 'ppb',
+        maxValue: 100
+      },
+      {
+        id: 'so2',
+        question: 'Do you smell something like burning or matches?',
+        technical: 'Sulfur Dioxide',
+        value: 6,
+        unit: 'ppb',
+        maxValue: 75
+      },
+      {
+        id: 'voc',
+        question: 'Do you use a lot of cleaning sprays, paints, or air fresheners?',
+        technical: 'Volatile Organic Compounds (VOCs)',
+        value: 1,
+        unit: 'ppm',
+        maxValue: 200
+      },
+      {
+        id: 'co',
+        question: 'Are you near traffic or enclosed garages?',
+        technical: 'Carbon Monoxide',
+        value: 1,
+        unit: 'ppm',
+        maxValue: 10
+      }
+    ];
+
+    function getEmoji(value, max) {
+      const percent = value / max;
+      if (percent < 0.33) return '😊';
+      if (percent < 0.66) return '😐';
+      return '😷';
+    }
+
+    function renderForm() {
+      const container = document.getElementById('form-area');
+      container.innerHTML = '';
+
+      pollutants.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pollutant';
+
+        const header = document.createElement('div');
+        header.className = 'pollutant-header';
+
+        const info = document.createElement('div');
+        info.className = 'info';
+        info.innerHTML = `<strong>${p.question}</strong><br><small>${p.technical}</small>`;
+
+        const spanValue = document.createElement('span');
+        spanValue.id = `val-${p.id}`;
+        spanValue.innerText = `${p.value} ${p.unit}`;
+
+        const emoji = document.createElement('span');
+        emoji.id = `emoji-${p.id}`;
+        emoji.className = 'emoji';
+        emoji.innerText = getEmoji(p.value, p.maxValue);
+
+        header.appendChild(info);
+        header.appendChild(spanValue);
+        header.appendChild(emoji);
+
+        const inputRange = document.createElement('input');
+        inputRange.type = 'range';
+        inputRange.id = `input-${p.id}`;
+        inputRange.min = 0;
+        inputRange.max = p.maxValue;
+        inputRange.step = 1;
+        inputRange.value = p.value;
+
+        inputRange.oninput = (e) => {
+          const v = Number(e.target.value);
+          p.value = v;
+          document.getElementById(`val-${p.id}`).innerText = `${v} ${p.unit}`;
+          document.getElementById(`emoji-${p.id}`).innerText = getEmoji(v, p.maxValue);
+        };
+
+        div.appendChild(header);
+        div.appendChild(inputRange);
+        container.appendChild(div);
+      });
+    }
+
+    document.getElementById('check-btn').onclick = () => {
+      const sum = pollutants.reduce((acc, p) => acc + p.value, 0);
+      let label, tips;
+      if (sum < 150) {
+        label = 'Good 🌱';
+        tips = ['Low emissions from indoor activities and exercise.'];
+      } else if (sum < 300) {
+        label = 'Moderate 🌤️';
+        tips = ['Sensitive individuals should be cautious.'];
+      } else {
+        label = 'Poor 🔥';
+        tips = ['Limit outdoor exposure.'];
+      }
+
+      document.getElementById('result').innerText = `Total Score: ${sum} → Air Quality: ${label}`;
+      const tipsList = document.getElementById('tips-list');
+      tipsList.innerHTML = '';
+      tips.forEach(t => {
+        const li = document.createElement('li');
+        li.innerText = t;
+        tipsList.appendChild(li);
+      });
+      document.getElementById('tips').style.display = 'block';
+    };
+
+    renderForm();
+
+</script>
+</body>
+</html>
