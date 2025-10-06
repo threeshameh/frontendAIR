@@ -19,15 +19,16 @@
 <body>
   <header class="header">
     <div class="container">
-      <div class="logo">AirVISION</div>
+      <div class="logo"><img id="logo_img"src="thislogo.png">Airlytic</div>
       <nav class="nav">
-        <a href="home.html">Home</a>
+        <a href="#">Home</a>
         <a href="#">About Us</a>
         <a href="#">Services</a>
         <a href="#">Blog</a>
         <a href="#">Contact Us</a>
       </nav>
       <div class="menu-icon">☰</div>
+      <!--butngan ug navbar kay para if sa phone tan awon-->
     </div>
   </header>
 
@@ -38,7 +39,7 @@
     </header>
 
     <section class="live-analysis">
-      <h2><i class='bxr bxs-chart-bar-columns' style='color:#0a1fde'></i> Live Analysis</h2>
+
       <div class="score-container">
         <div class="score-info">
           <span class="emoji">😊</span>
@@ -48,42 +49,43 @@
         </div>
 
         <div class="metrics">
-          <div class="metric">✅ Fine Particulate Matter: <strong class="val-pm25"></strong>
+          <h2><i class='bxr bxs-chart-bar-columns' style='color:#0a1fde'></i> Live Analysis</h2>
+          <div class="metric">Fine Particulate Matter: <strong class="val-pm25"></strong>
             <div class="metric-bar-container">
               <progress id="bar-pm25" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-pm25">0 µg/m³</span></div>
             </div>
           </div>
 
-          <div class="metric">✅ Coarse Particulate Matter: <strong class="val-pm10"></strong>
+          <div class="metric">Coarse Particulate Matter: <strong class="val-pm10"></strong>
             <div class="metric-bar-container">
               <progress id="bar-pm10" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-pm10">0 µg/m³</span></div>
             </div>
           </div>
 
-          <div class="metric">✅ Nitrogen Oxides / Dioxide: <strong class="val-nox">21 ppb</strong>
+          <div class="metric">Nitrogen Oxides / Dioxide: <strong class="val-nox">21 ppb</strong>
             <div class="metric-bar-container">
               <progress id="bar-nox" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-nox">0 ppb</span></div>
             </div>
           </div>
 
-          <div class="metric">✅ Sulfur Dioxide: <strong class="val-so2">10 ppb</strong>
+          <div class="metric">Sulfur Dioxide: <strong class="val-so2">10 ppb</strong>
             <div class="metric-bar-container">
               <progress id="bar-so2" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-so2">0 ppb</span></div>
             </div>
           </div>
 
-          <div class="metric">✅ Volatile Organic Compounds: <strong class="val-voc">50 µg/m³</strong>
+          <div class="metric">Volatile Organic Compounds: <strong class="val-voc">50 µg/m³</strong>
             <div class="metric-bar-container">
               <progress id="bar-voc" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-voc">0 µg/m³</span></div>
             </div>
           </div>
 
-          <div class="metric">✅ Carbon Monoxide: <strong class="val-co">1 ppm</strong>
+          <div class="metric">Carbon Monoxide: <strong class="val-co">1 ppm</strong>
             <div class="metric-bar-container">
               <progress id="bar-co" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-co">0 ppm</span></div>
@@ -152,7 +154,8 @@
 
         const spanValue = document.createElement('span');
         spanValue.id = `val-${p.id}`;
-        spanValue.innerText = `${p.value} ${p.unit}`;
+        spanValue.innerText = '';  // blank
+
 
         const emojiSpan = document.createElement('span');
         emojiSpan.id = `emoji-${p.id}`;
@@ -174,7 +177,7 @@
         inputRange.oninput = (e) => {
           const v = Number(e.target.value);
           p.value = v;
-          document.getElementById(`val-${p.id}`).innerText = `${v} ${p.unit}`;
+          document.getElementById(`val-${p.id}`).innerText = '';  // blank
           document.getElementById(`emoji-${p.id}`).innerText = getEmoji(v / p.maxValue);
 
           updateLiveAnalysis();
@@ -224,17 +227,19 @@
       }
     }
 
-    function barLiveAnalysis() {
-      pollutants.forEach(p => {
-        const bar = document.getElementById(`bar-${p.id}`);
-        const label = document.getElementById(`text-${p.id}`);
-        if (bar && label) {
-          const percent = (p.value / p.maxValue) * 100;
-          bar.value = percent;
-          label.innerText = `${p.value} ${p.unit}`;
-        }
-      });
+   function barLiveAnalysis() {
+  pollutants.forEach(p => {
+    const bar = document.getElementById(`bar-${p.id}`);
+    const label = document.getElementById(`text-${p.id}`);
+    if (bar && label) {
+      const percent = (p.value / p.maxValue) * 100;
+      bar.value = percent;
+     label.innerText = '';  // blank
+  // no unit here
     }
+  });
+}
+
 
     document.getElementById('check-btn').onclick = () => {
       const sum = pollutants.reduce((acc, p) => acc + p.value, 0);

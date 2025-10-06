@@ -370,26 +370,46 @@ a { text-decoration: none; }
 }
 
 .live-analysis h2 {
-  font-size: 24px;
-  margin-top: 30px;
-  color: #2c7a7b;
+  grid-column: 1 / -1; /* span from first to last column */
+  font-size: 18px;
+  font-weight: 500;
+  padding: 2px 4px;
+  color: #0c0d0e;
+  border-radius: 6px;
+  text-align: justify;
+  margin: 0 0 0px 0;
 }
+
+
+
 
 .score-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap;     /* center the contents horizontally */
   background-color: #e6fffa;
-  border-left: 6px solid #b5d7ff;
   padding: 20px;
-  border-radius: 8px;
-  margin-top: 20px;
+  border-radius: 15px;
+  margin: 20px auto;            /* auto left/right to center container */
   gap: 40px;
+  max-width: calc(100% - .50px); /* leaves ~30px on each side */
+  box-sizing: border-box;       /* include padding in width */
+   opacity: 0;
+  transform: translateY(20px); /* start slightly below */
+  animation: fadeUp 0.6s ease forwards; /* forwards keeps final state */
+   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15); 
 }
-
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0); /* move to original position */
+  }
+}
 .score-info {
-  flex: 1;
-  min-width: 250px;
-}
+  display: inline-block; /* shrink to content width */
+  padding: 4px 8px;     /* optional: add some spacing inside the box */
+  
+}a
+
 
 .score-info .emoji {
   font-size: 32px;
@@ -408,17 +428,18 @@ a { text-decoration: none; }
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+  grid-template-columns: repeat(3, 1fr); /* Three equal columns */
   gap: 12px; /* Space between items */
+  margin-left: auto;
 }
 
 .metric {
-  background-color: #f0fff4;
-  border: 1px solid #c6f6d5;
+  background-color: #ffffff;
   padding: 10px 15px;
-  border-radius: 6px;
-  font-size: 16px;
-  color: #276749;
+  border-radius: 10px;
+  font-size: clamp(12px, 1.5vw, 14px);
+  color: #5f5f5f;
+   min-height: 100px;
 }
 .metric-bar-container {
   margin-top: 15px;
@@ -426,7 +447,39 @@ a { text-decoration: none; }
   width: 100%;
   max-width: 400px; /* you choose */
 }
+/* General progress bar */
+progress {
+  width: 250px;
+  height: 20px;
+  appearance: none;
+  border-radius: 10px;
+  overflow: hidden; /* ensures rounded corners */
+}
 
+/* Track (background) */
+progress::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 10px;
+}
+
+/* Filled part with gradient (Chrome, Safari, Edge) */
+progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #00b894, #d63031); /* green → yellow → red */
+  border-radius: 10px;
+}
+.input-header h1{
+  font-size: 30pt;
+  margin-bottom: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: bold;
+}
+.input-header p {
+  font-size: 16pt;
+  margin-bottom: 20px;
+  color: #585757;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
 /* Base <progress> styling */
 .metric-bar-container progress {
   width: 100%;
@@ -439,9 +492,9 @@ a { text-decoration: none; }
 }
 /* Input Card */
 .input-card {
-  width: 450px; /* fixed width */
+  width: 500px; /* fixed width */
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   margin: 20px; /* spacing from top and left */
@@ -452,7 +505,7 @@ a { text-decoration: none; }
 .input-card h1 {
   font-size: 1.5rem;
   margin-bottom: 10px;
-  color: #0a1fde;
+  color: #2d2d34;
 }
 
 .input-card p {
@@ -463,6 +516,12 @@ a { text-decoration: none; }
 
 #form-area .pollutant {
   margin-bottom: 15px;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+
 }
 
 .pollutant-header {
