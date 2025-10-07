@@ -2,8 +2,6 @@
 body { font-family: 'Arial', sans-serif; color: #222; line-height: 1.6; }
 a { text-decoration: none; }
 
-
-
 /* Header */
 .header {
   background:#fffffffa;
@@ -382,9 +380,7 @@ a { text-decoration: none; }
   margin: 0 0 0px 0;
 }
 
-.live-analysis{
-  width:100%
-}
+
 
 
 .score-container {
@@ -393,12 +389,9 @@ a { text-decoration: none; }
   background-color: #e6fffa;
   padding: 20px;
   border-radius: 15px;
-  margin: 10px auto;            /* auto left/right to center container */
-  gap: 20px;
-  min-width:90vw;
-  /* max-width: calc(100% - 0px); leaves ~30px on each side  */
-
-            /* ensures it doesn’t get too wide */
+  margin: 20px auto;            /* auto left/right to center container */
+  gap: 40px;
+  max-width: calc(100% - .50px); /* leaves ~30px on each side */
   box-sizing: border-box;       /* include padding in width */
    opacity: 0;
   transform: translateY(20px); /* start slightly below */
@@ -414,15 +407,16 @@ a { text-decoration: none; }
 .score-info {
   display: inline-block; /* shrink to content width */
   padding: 4px 8px;     /* optional: add some spacing inside the box */
-  justify-content: center;
-}
+  
+}a
+
 
 .score-info .emoji {
   font-size: 32px;
 }
 
 .score-info h3 {
-  margin: 8px 0 3px;
+  margin: 10px 0 5px;
   font-size: 20px;
   color: #2f855a;
 }
@@ -430,7 +424,6 @@ a { text-decoration: none; }
 .score-info .note {
   font-style: italic;
   color: #4a5568;
-  font-size: 13px;
 }
 
 .metrics {
@@ -499,15 +492,14 @@ progress::-webkit-progress-value {
 }
 /* Input Card */
 .input-card {
-  width: 650px; /* fixed width */
-  padding: 50px;
+  width: 500px; /* fixed width */
+  padding: 20px;
   background-color: #ffffff;
-  border-radius: 15px;
-   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15); 
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   margin: 20px; /* spacing from top and left */
   float: left; /* align to left */
   font-family: Arial, sans-serif;
-  margin-left: 60px;
 }
 
 .input-card h1 {
