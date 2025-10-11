@@ -45,7 +45,8 @@
           <span class="emoji">😊</span>
           <h3>Excellent Air Quality</h3>
           <p>Score: <strong class="score-value">83/100</strong></p>
-          <p class="note">Perfect conditions for outdoor activities!</p>
+          
+          <p class="note"></p>
         </div>
 
         <div class="metrics">
@@ -98,29 +99,35 @@
   </div>
 
   <!-- Input Form -->
+   <div class="input-tips-grid">
   <div class="input-card">
-    <h1>🌿 Environmental Assessment</h1>
-    <p>Adjust the sliders to describe your surroundings and assess your air quality.</p>
+    <div class="input-input">
+  <i class="bxr bx-trees" style="color: #0a1fde; font-size: 48px; background-color: #e3e6ff; border-radius:10px;"></i>
 
+    <h1>Environmental Assessment</h1>
+    <p>Adjust the sliders to describe your surroundings and assess your air quality.</p>
+    </div>
     <div id="form-area"></div>
 
     <button id="check-btn">Analyze My Air Quality</button>
 
-    <div id="result"></div>
-
-    <div id="tips" class="tips-box" style="display:none;">
-      <h3>Quick Tips</h3>
-      <ul id="tips-list"></ul>
-      <h3>Health Protection</h3>
-      <ul>
-        <li>Use filters to reduce exposure during high pollution.</li>
-        <li>Use indoor purifiers to limit pollutants.</li>
-        <li>Close windows and doors to reduce air pollutants.</li>
-        <li>Avoid outdoor activities when air quality is poor.</li>
-      </ul>
-    </div>
   </div>
 
+   <div id="tips" class="tips-box">
+  <h3>Quick Tips</h3>
+  <ul id="tips-list"></ul>
+
+  <h3>Health Protection</h3>
+  <ul class="health-tips">
+    <li>🏠 Keep windows closed during high pollution</li>
+    <li>🌱 Use indoor plants to purify air naturally</li>
+    <li>💨 Consider air purifiers for bedrooms</li>
+    <li>🚶‍♂️ Exercise outdoors when air is clean</li>
+  </ul>
+</div>
+
+
+    </div>
   <script>
     const pollutants = [
       { id: 'pm25', question: 'Is the air around you hazy or clear?', technical: 'Fine Particulate Matter (PM2.5)', value: 15, unit: 'µg/m³', maxValue: 100 },
@@ -137,6 +144,21 @@
       else return '😷';
     }
 
+    function getTooltipText(id) {
+  switch (id) {
+    case 'pm25': return 'Tiny particles that can penetrate deep into your lungs and even enter your bloodstream.<br><span style="color:#4fa3ff;font-weight:500;">Ideal level: Below 35 μg/m³. Use air purifiers indoors on hazy days!</span>';
+    case 'pm10': return 'Larger particles from dust, pollen, and smoke that can irritate your eyes and throat.<br><span style="color:#4fa3ff;font-weight:500;">Ideal level: Below 50 μg/m³. Close windows on dusty days!</span>';
+    case 'nox': return 'Comes from vehicles or factories.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 40 ppb</span>';
+    case 'so2': return 'Produced by burning coal or oil.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 20 ppb</span>';
+    case 'voc': return 'Emitted by sprays, paints, and cleaners.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 200 µg/m³</span>';
+    case 'co': return 'From traffic and enclosed garages.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 9 ppm</span>';
+    default: return '';
+  }
+}
+document.querySelectorAll('.pollutant').forEach((el, i) => {
+  el.style.animationDelay = `${i * 0.2}s`; // stagger animation
+});
+
     function renderForm() {
       const container = document.getElementById('form-area');
       container.innerHTML = '';
@@ -148,9 +170,19 @@
         const header = document.createElement('div');
         header.className = 'pollutant-header';
 
-        const info = document.createElement('div');
-        info.className = 'info';
-        info.innerHTML = `<strong>${p.question}</strong><br><small>${p.technical}</small>`;
+       const info = document.createElement('div');
+info.className = 'info-wrapper';
+info.innerHTML = `
+  <strong>${p.question}</strong>
+  <div class="info">
+    <span class="info-icon"><i class='bxr  bx-help-circle'  style='color:#0a1fde'></i> </span>
+    <div class="tooltip">
+      <strong>${p.technical}</strong><br>${getTooltipText(p.id)}
+    </div>
+  </div>
+  <br><small>${p.technical}</small>
+`;
+
 
         const spanValue = document.createElement('span');
         spanValue.id = `val-${p.id}`;
@@ -210,8 +242,17 @@
 
       const emojiElem = document.querySelector('.score-info .emoji');
       const h3Elem = document.querySelector('.score-info h3');
-
+      const noteElem = document.querySelector('.score-info .note');
       const percent = score / 100;
+      if (percent > 0.8) {
+  noteElem.innerText = "Perfect weather to do outdoor activities!";
+} else if (percent > 0.5) {
+  noteElem.innerText = "Good air today — enjoy some time outside.";
+} else if (percent > 0.3) {
+  noteElem.innerText = "Moderate air quality. Sensitive groups should take caution.";
+} else {
+  noteElem.innerText = "Poor air quality — better to stay indoors today.";
+}
       if (percent > 0.8) {
         if (h3Elem) h3Elem.innerText = "Excellent Air Quality";
         if (emojiElem) emojiElem.innerText = "😊";
@@ -225,6 +266,8 @@
         if (h3Elem) h3Elem.innerText = "Poor Air Quality";
         if (emojiElem) emojiElem.innerText = "😷";
       }
+
+      
     }
 
    function barLiveAnalysis() {
@@ -255,7 +298,6 @@
         tips = ['Limit outdoor exposure.'];
       }
 
-      document.getElementById('result').innerText = `Total Score: ${sum} → Air Quality: ${label}`;
       const tipsList = document.getElementById('tips-list');
       tipsList.innerHTML = '';
       tips.forEach(t => {
@@ -263,11 +305,133 @@
         li.innerText = t;
         tipsList.appendChild(li);
       });
-      document.getElementById('tips').style.display = 'block';
     };
 
     // initial render
     renderForm();
   </script>
-</body>
+<!--script sa sliders-->
+  <script>
+document.querySelectorAll('input[type="range"]').forEach(slider => {
+  const update = () => {
+    const val = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.background = `linear-gradient(to right, #0a0a1a ${val}%, #e8e9f0 ${val}%)`;
+  };
+  slider.addEventListener('input', update);
+  update(); // run once on load
+});
+
+</script>
+<script>
+document.getElementById('check-btn').addEventListener('click', () => {
+  // Change the header text
+  const header = document.querySelector('.input-header');
+  header.innerHTML = `
+    <h1>Your Air Quality Report</h1>
+    <p>Comprehensive analysis of your environmental conditions</p>
+  `;
+
+  // ✅ Calculate live score based on slider inputs
+  let totalPercent = 0;
+  pollutants.forEach(p => totalPercent += (p.value / p.maxValue));
+  const avgPercent = totalPercent / pollutants.length;
+  const score = Math.round((1 - avgPercent) * 100);
+
+  // Determine grade & color dynamically
+  let grade = 'A+';
+  let badgeColor = '#0a68ff';
+  let emoji = '😊';
+  let airLabel = 'Excellent';
+
+  if (score >= 80) {
+    grade = 'A+';
+    badgeColor = '#0a68ff';
+    emoji = '😊';
+    airLabel = 'Excellent';
+  } else if (score >= 60) {
+    grade = 'B';
+    badgeColor = '#4caf50';
+    emoji = '🙂';
+    airLabel = 'Good';
+  } else if (score >= 40) {
+    grade = 'C';
+    badgeColor = '#ffc107';
+    emoji = '😐';
+    airLabel = 'Moderate';
+  } else {
+    grade = 'D';
+    badgeColor = '#e53935';
+    emoji = '😷';
+    airLabel = 'Poor';
+  }
+
+  // Replace content inside .live-analysis
+  const liveAnalysis = document.querySelector('.live-analysis');
+  liveAnalysis.innerHTML = `
+  <div style="
+   background-color: #f3fdf6;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15); 
+    width: 100%;          /* fills the parent container */
+    box-sizing: border-box; /* includes padding in width */
+    opacity: 0;
+  transform: translateY(20px); /* start slightly below */
+   animation: fadeUp 1.2s ease forwards; /* twice slower */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0); /* move to original position */
+  }
+}
+">
+
+      <div class="report-main">
+  <div class="score-section">
+       <div class="score-top">
+          <div class="emoji-wrapper">
+             <div class="emoji-circle">${emoji}</div>
+              <span class="grade-badge" style="background:${badgeColor};">${grade}</span>
+          </div>
+    
+         <div class="score-text">
+          <h2>${airLabel}</h2>
+          <p>Air Quality</p>
+          <div class="badge">🏅 Fresh Air Champion</div>
+        </div>
+       </div>
+      <div class="score-bar">
+        <p>Overall Score</p>
+        <h3>${score}/100</h3>
+        <div class="bar-bg"><div class="bar-fill" style="width:${score}%; background:${badgeColor};"></div></div>
+      </div>
+
+  </div>
+
+  <div class="report-details">
+      <div class="card">
+        <h4>💊 Health Risk</h4>
+        <h3>${score >= 80 ? 'Minimal Risk' : score >= 60 ? 'Low Risk' : score >= 40 ? 'Moderate Risk' : 'High Risk'}</h3>
+        <p>${score >= 80 ? 'Better than 89% of global cities' : score >= 60 ? 'Healthy for most individuals' : score >= 40 ? 'Sensitive groups should be cautious' : 'Health impacts likely'}</p>
+      </div>
+      <div class="card">
+        <h4>📊 Classification</h4>
+        <h3>${grade === 'A+' ? 'Cluster A' : grade === 'B' ? 'Cluster B' : grade === 'C' ? 'Cluster C' : 'Cluster D'}</h3>
+        <p>AI Analysis Result</p>
+      </div>
+      <div class="card">
+        <h4>🌱 Environmental Impact</h4>
+        <h3>${score >= 70 ? 'Low Impact' : score >= 50 ? 'Moderate Impact' : 'High Impact'}</h3>
+        <p>${score >= 70 ? 'Your environment is sustainable and eco-friendly' : score >= 50 ? 'Some pollutants detected' : 'High pollution impact detected'}</p>
+      </div>
+    </div>
+</div>
+    </div>
+
+  `;
+});
+</script>
+
+  </body>
 </html>

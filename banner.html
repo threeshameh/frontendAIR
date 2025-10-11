@@ -1,133 +1,521 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AirVision — Air Quality Checker</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-7H9Wj6E5uUmtzBr8hjq3bE9U8uwgLM1u9bXEdqjhvTTscMRB1jW+E9by7D5cXv8Ht0szzUASoHK3IuA6hC/9+w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-7H9Wj6E5uUmtzBr8hjq3bE9U8uwgLM1u9bXEdqjhvTTscMRB1jW+E9by7D5cXv8Ht0szzUASoHK3IuA6hC/9+w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
-<body>
-  <!-- Header -->
-  <header class="header">
-    <div class="container">
-      <div class="logo"><img id="logo_img"src="thislogo.png">Airlytic</div>
-      <nav class="nav">
-        <a href="#">Home</a>
-        <a href="#">About Us</a>
-        <a href="#">Services</a>
-        <a href="#">Blog</a>
-        <a href="#">Contact Us</a>
-      </nav>
-      <div class="menu-icon">☰</div>
-      <!--butngan ug navbar kay para if sa phone tan awon-->
-    </div>
-  </header>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>See the Invisible. <br><span>Understand Your Air.</span></h1>
-      <p>Monitor your environment with <strong>AirVision</strong>—
- a smart platform that analyzes air quality
-to reveal pollution risks and help you breathe better</p>
-      <a href="input.html" class="btn">Get Started</a>
-    </div>
-    <div class="hero-img">
-      <img src="cut.png" alt="Digital Marketing Illustration">
-    </div>
-  </section>
+<body>
+  <div id="header-container"></div>
+  <script>
+  async function loadHtmlWithScripts(url, containerSelector) {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to load ' + url + ' — ' + res.status);
+    const text = await res.text();
+
+    const temp = document.createElement('div');
+    temp.innerHTML = text;
+
+    const container = document.querySelector(containerSelector);
+    if (!container) throw new Error('Container not found: ' + containerSelector);
+
+    const scripts = [];
+    Array.from(temp.childNodes).forEach(node => {
+      if (node.tagName && node.tagName.toLowerCase() === 'script') {
+        scripts.push(node);
+      } else {
+        container.appendChild(node);
+      }
+    });
+
+    const nestedScripts = Array.from(container.querySelectorAll('script'));
+    nestedScripts.forEach(s => {
+      const clone = s.cloneNode(true);
+      scripts.push(clone);
+      s.parentNode && s.parentNode.removeChild(s);
+    });
+
+    for (const s of scripts) {
+      const src = s.getAttribute && s.getAttribute('src');
+      const type = s.getAttribute && s.getAttribute('type');
+      if (src) {
+        await new Promise((resolve, reject) => {
+          const ext = document.createElement('script');
+          if (type) ext.type = type;
+          ext.src = src;
+          ext.async = false;
+          ext.onload = resolve;
+          ext.onerror = () => reject(new Error('Failed to load script: ' + src));
+          document.head.appendChild(ext);
+        });
+      } else {
+        const inline = document.createElement('script');
+        if (type) inline.type = type;
+        inline.text = s.textContent || s.innerText || '';
+        document.body.appendChild(inline);
+        inline.remove();
+      }
+    }
+  }
+// Load Header.html 
+  loadHtmlWithScripts('header.html', '#header-container').catch(console.error);
+  </script>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h1 style="text-align:left; max-width:720px; margin:0;">See the Invisible<br><span>Understand Your Air.</span></h1>
+    <p>Observe your surroundings with <strong>AirLytic</strong> 
+    an intelligent platform that evaluates air quality to uncover pollution hazards and assist you in breathing easier.</p>
+    <a href="input.html" class="btn">Get Started</a>
+  </div>
+  <div class="hero-img">
+    <img src="cut.png" alt="Digital Marketing Illustration">
+  </div>
+</section>
+
+<!-- Hero section -->
+<style>
+  .hero .word {
+    opacity: 0;
+    display: inline-block;
+    transform: translateY(10px) scale(0.95);
+    color:#fff
+  }
+  .hero .word.in {
+    animation: fadeInUp 0.4s cubic-bezier(.2,.9,.3,1) forwards;
+  }
+  @keyframes fadeInUp {
+    0% {opacity:0; transform:translateY(10px) scale(0.95);}
+    100% {opacity:1; transform:translateY(0) scale(1);}
+  }
+</style>
+
+<script>
+  const h1 = document.querySelector('.hero h1');
+  const parts = h1.innerHTML.split(/(<br\s*\/?>)/i);
+  h1.innerHTML = parts.map(p => /<br/i.test(p) ? '<br>' :
+    p.split(/\s+/).map(w => w?`<span class="word">${w}</span>`:'').join(' ')
+  ).join('');
+  const words = h1.querySelectorAll('.word');
+  let delay = 200;
+  words.forEach(w=>{
+    setTimeout(()=>w.classList.add('in'), delay);
+    delay += 130;
+    if (w.previousSibling && w.previousSibling.nodeName==='BR') delay += 250;
+  });
+</script>
 
   <!-- Why Choose Us -->
   <section class="why-choose">
-    <h2>Explore Airlytic</h2>
-    <div class="features">
-      <div class="feature">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#0A5CFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <rect width="4" height="6" x="4" y="14" rx="1"/>
-  <rect width="4" height="10" x="10" y="10" rx="1"/>
-  <rect width="4" height="14" x="16" y="6" rx="1"/>
-  <path d="M3 20h18" stroke="#0A5CFF" stroke-width="2"/>
-</svg>
-        <h3>Interactive Air Input</h3>
-        <p>Enter your own air quality data and instantly visualize pollution levels 
-        like PM2.5, CO, and NO₂ — making complex air metrics easy to understand.</p>
-      </div>
-      <div class="feature">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#0A5CFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M12 3L5 6v6c0 5.25 3.5 9.75 7 10 3.5-.25 7-4.75 7-10V6l-7-3z"/>
-</svg>
-
-        <h3>Smart AI Clustering</h3>
-        <p>Powered by <strong>K-Means</strong> machine learning, AirVision intelligently groups 
-        your readings into clear categories: Good, Moderate, or Unhealthy.</p>
-      </div>
-      <div class="feature">
-   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#0A5CFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="12" cy="8" r="4"/>
-  <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
-</svg>
-
-        <h3>Personalized Recommendations</h3>
-        
-        <p>Receive actionable tips to improve your environment — from reducing exposure 
-        to pollution to finding ways to breathe cleaner, fresher air.</p>
-      </div>
+  <h2>Explore Airlytic</h2>
+  <div class="features">
+    <div class="feature">
+      <h3>
+        <img src="air.png" alt="Air Input Icon" class="icon"> 
+        Interactive Air Input
+      </h3>
+      <p>
+        Enter your own air quality data and instantly visualize pollution levels 
+        like PM2.5, CO, and NO₂ — making complex air metrics easy to understand.
+      </p>
     </div>
-  </section>
+
+    <div class="feature">
+      <h3>
+        <img src="cluster.png" alt="AI Icon" class="icon"> 
+        Smart AI Clustering
+      </h3>
+      <p>
+        Powered by <strong>K-Means</strong> machine learning, AirVision intelligently groups 
+        your readings into clear categories: Good, Moderate, or Unhealthy.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h3>
+        <img src="feature.png" alt="Medal Icon" class="icon"> 
+        Personalized Recommendations
+      </h3>
+      <p>
+        Receive actionable tips to improve your environment — from reducing exposure 
+        to pollution to finding ways to breathe cleaner, fresher air.
+      </p>
+    </div>
+  </div>
+</section>
 
   <!-- Quote Section -->
-  <section class="quote">
+<section class="quote">
   <h2>Breathe Smarter, Live Healthier</h2>
-  <p>Discover your air quality today — it only takes a minute to know what you’re breathing.</p>
-  <a href="login.html" class="btn">Check My Air</a>
+  <p>Discover your air quality today!! it only takes a minute to know what you’re breathing.</p>
+  <a href="input.html" class="btn">Check this out</a>
 </section>
-<!-- Services Section -->
-<section class="insights">
-  <div class="insights-content">
-    <span class="tag">How It Works</span>
-    <h2>Get Air Quality Insights in 3 Simple Steps</h2>
+<style>
+ .quote {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(180deg, #2950d1 0%, #372593 50%, #2c35e0 100%);
+  color: #e7e8f9;
+  transform: translateY(40px) scale(0.95);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(.2,.9,.3,1);
+  box-shadow: 0 12px 30px rgba(8,30,70,0.06);
+  border-radius: 12px;
+}
+.quote.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+</style>
 
-    <ul class="features-list">
-      <li>Advanced AI-powered air quality analysis</li>
-      <li>Real-time environmental monitoring</li>
-      <li>Personalized health recommendations</li>
-      <li>Interactive data visualization</li>
-      <li>Compare with global standards</li>
+<script>
+  const quote = document.querySelector('.quote');
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting) quote.classList.add('show');
+      else quote.classList.remove('show');
+    });
+  }, {threshold: 0.2});
+  observer.observe(quote);
+</script>
+  <!-- Insights Section -->
+<section class="insights">
+  <style>
+.insights {
+  display: flex;
+  align-items: center;
+  justify-content: center;     
+  gap: 40px;
+  padding: 80px 20px;
+  width: 100%;
+  background: linear-gradient(180deg, #e6f3ff, #f4faff);
+  box-sizing: border-box;
+}
+.insights-image {
+  flex: 0 0 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5%;          
+}
+
+    @media(max-width:780px){ .insights{flex-direction:column-reverse;padding:60px 16px} }
+ .insights-content {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;    
+  text-align: left;         
+  margin-left: 10%;          
+}
+.tag{ display:inline-block; padding:8px 14px; border-radius:999px; background:#e6f0ff; color:#1b4f9b; font-weight:700; margin-bottom:14px;
+          transform:translateY(18px); opacity:0; transition:transform .7s cubic-bezier(.16,.84,.24,1), opacity .7s; font-size:0.95rem; }
+    .insights h2{ font-size:2.05rem; margin:0 0 24px; color:#0f2a57;
+                 transform:translateY(22px); opacity:0; transition:transform .75s cubic-bezier(.16,.84,.24,1), opacity .75s; line-height:1.05; }
+
+  .features-list{ margin:24px 0 34px; padding:0; list-style:none; color:#27405f; font-size:1.15rem; line-height:1.9; max-width:640px; }
+  .features-list li {
+  position:relative; margin:16px 0; padding-left:40px;
+  opacity:0; transform:translateY(36px) scale(.99);
+  transition:
+    transform .78s cubic-bezier(.16,.84,.24,1),
+    opacity .78s cubic-bezier(.16,.84,.24,1);
+  transition-delay:calc(var(--i,0)*0.3s);
+  text-align:left;
+}
+.features-list li::before {
+  content:"✔"; position:absolute; left:0; top:50%; transform:translateY(-50%) scale(.6);
+  font-size:1.12rem; color:#2b7fff; font-weight:800; opacity:0;
+  transition:transform .65s cubic-bezier(.16,.84,.24,1), opacity .65s;
+  transition-delay:calc(var(--i,0)*0.3s + .1s);
+}
+
+    .insights.in-view .tag,
+    .insights.in-view h2 { transform:none; opacity:1; }
+    .insights.in-view .features-list li { opacity:1; transform:none; }
+    .insights.in-view .features-list li::before { transform:translateY(-50%) scale(1); opacity:1; }
+
+    .insights .btn{ display:inline-block; padding:12px 20px; border-radius:8px;
+                    background:linear-gradient(90deg,#2b7fff,#1e63cc); color:#fff; font-weight:700; text-decoration:none;
+                    box-shadow:0 10px 26px rgba(43,127,255,.12); transition:transform .50s; margin-top:6px; }
+    .insights .btn:hover{ transform:translateY(-3px) }
+
+    .insights-image{ flex:0 0 420px; display:flex; align-items:center; justify-content:center; }
+    .insights-image img{ max-width:100%; border-radius:14px; box-shadow:0 18px 46px rgba(13,34,75,.10);
+                         transform:translateY(18px) scale(.995); opacity:0;
+                         transition:transform .85s cubic-bezier(.16,.84,.24,1), opacity .85s; }
+    .insights.in-view .insights-image img{ transform:translateY(0) scale(1.02); opacity:1; animation:floaty 6s ease-in-out infinite; }
+    @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+  </style>
+
+  <div class="insights-content" aria-labelledby="insights-heading">
+    <span class="tag">How It Works</span>
+    <h2 id="insights-heading">Get Air Quality Insights in 3 Simple Steps</h2>
+
+    <ul class="features-list" id="features-list">
+      <li style="--i:0">Advanced AI-powered air quality analysis</li>
+      <li style="--i:1">Real-time environmental monitoring</li>
+      <li style="--i:2">Personalized health recommendations</li>
+      <li style="--i:3">Interactive data visualization</li>
+      <li style="--i:4">Compare with global standards</li>
     </ul>
 
     <a href="login.html" class="btn">Start Your Analysis</a>
   </div>
 
-  <div class="insights-image">
-    <img src="pics.png" alt="Air Quality Analysis Illustration">
+  <div class="insights-image" aria-hidden="false">
+    <img src="blog1.jpg" alt="Air Quality Analysis Illustration">
   </div>
+
+  <script>
+    (function(){
+      const s = document.querySelector('.insights'), list = document.getElementById('features-list');
+      if(!s||!list) return;
+      Array.from(list.children).forEach((li,i)=>li.style.setProperty('--i',i));
+      if(!('IntersectionObserver' in window)){ s.classList.add('in-view'); return; }
+      new IntersectionObserver((entries, obs) => {
+        if(entries.some(e=>e.isIntersecting)){ s.classList.add('in-view'); obs.disconnect(); }
+      }, { threshold: 0.18 }).observe(s);
+    })();
+  </script>
 </section>
 
-  <!-- Blog -->
-  <section class="blog">
-    <h2>Our Latest Media</h2>
-    <div class="blog-grid">
-      <div class="blog-card">
-        <img src="images/blog1.jpg" alt="">
-        <h3>K-Means Clustering</h3>
-        <p>Your data is analyzed using K-means Clustering algorithm.</p>
-        <a href="#">Learn More →</a>
-      </div>
-      <div class="blog-card">
-        <img src="blog1.jpg" alt="">
-        <h3>Why Choose AirVision</h3>
-        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed.</p>
-        <a href="#">Read More →</a>
-      </div>
-      <div class="blog-card">
-        <img src="images/blog3.jpg" alt="">
-        <h3>What we do with your data</h3>
-        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed.</p>
-        <a href="#">Read More →</a>
-      </div>
-    </div>
-  </section>
+ <!-- Blog -->
+<section class="blog">
+  <h2>Our Latest Media</h2>
 
+  <style>
+    .blog .container { max-width: 1080px; margin: 0 auto; }
+    .blog .wrapper { padding: 20px 0; }
+
+    .blog .card {
+      height: 370px; 
+      display: flex;
+      flex-direction: column;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      background: #fff;
+    }
+
+    .blog .card .card-image img {
+      height: 190px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 0;
+    }
+
+    .blog .card .card-content {
+      padding: 16px 20px; 
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .blog .card-title {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      color: #222;
+    }
+
+    .blog .card-text {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      max-height: 4em; 
+      overflow: hidden;
+    }
+
+    .blog .card-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+    }
+
+    .blog .card-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .blog .card-profile img {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .blog .card-profile-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .blog .card-profile-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .blog .card-profile-role {
+      font-size: 0.72rem;
+      color: #888;
+    }
+
+    .blog .card-button {
+      background: #2b7fff;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: background 0.3s ease;
+    }
+
+    .blog .card-button:hover {
+      background: #1e63cc;
+    }
+
+    .blog .swiper-pagination-bullet { width: 10px; height: 10px; }
+
+    
+    .blog .swiper-slide {
+      padding: 10px 18px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      .blog .card { height: auto; }
+      .blog .card .card-image img { height: 210px; } 
+      .blog .swiper-slide { padding: 10px; }
+    }
+  </style>
+  <div class="container swiper">
+    <div class="wrapper">
+      <div class="card-list swiper-wrapper">
+
+        <!-- Card 1 -->
+        <div class="card swiper-slide">
+          <div class="card-image">
+            <img src="Visual.png" alt="Design Trends" />
+            <div class="card-tag">Visualization</div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">K-Means Clustering</h3>
+            <p class="card-text">Clustering is an unsupervised learning method that groups unlabeled data based on similarities. 
+            It's goal is to form clusters where data points within the same group are more similar to each other than to those in other groups.</p>
+            <div class="card-footer">
+              <a href="#"></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card swiper-slide">
+          <div class="card-image">
+            <img src="develop.png" alt="Development" />
+            <div class="card-tag">Development</div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Why Choose Airlytic</h3>
+            <p class="card-text">AirLytic automates visual inspections, reducing fatigue and human error while saving time, 
+              cutting costs, and enhancing accuracy through an easy-to-use AI platform.</p>
+            <div class="card-footer">
+              <a href="#" ></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card swiper-slide">
+          <div class="card-image">
+            <img src="Learn.png" alt="AI" />
+            <div class="card-tag">Learn</div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Explore how it is implemented</h3>
+            <p class="card-text">It iteratively groups data points by similarity,
+               minimizing their distance from cluster centroids to find the most accurate groupings.</p>
+            <div class="card-footer">
+              <a href="#" ></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duplicate Slide -->
+        <div class="card swiper-slide">
+          <div class="card-image">
+            <img src="discover.png" alt="Design Trends" />
+            <div class="card-tag">Discover</div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">What we do with your data</h3>
+            <p class="card-text">Air quality data helps assess pollution, protect health, guide policies, 
+              and issue public alerts while tracking progress toward cleaner air.</p>
+            <div class="card-footer">
+              <a href="#" ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    new Swiper(".wrapper", {
+      loop: true,
+      spaceBetween: 30,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+        dynamicBullets: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        0: { slidesPerView: 1 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+      },
+    });
+  </script>
+</section>
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
@@ -138,8 +526,7 @@ to reveal pollution risks and help you breathe better</p>
           <li><a href="#">Contact</a></li>
           <li><a href="#">Support</a></li>
         </ul>
-      </div>
-      
+      </div> 
       <div>
         <h3>Recent Articles</h3>
         <ul>
