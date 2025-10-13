@@ -65,21 +65,21 @@
             </div>
           </div>
 
-          <div class="metric">Nitrogen Oxides / Dioxide: <strong class="val-nox">21 ppb</strong>
+          <div class="metric">Nitrogen Oxides / Dioxide: <strong class="val-nox">0 ppb</strong>
             <div class="metric-bar-container">
               <progress id="bar-nox" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-nox">0 ppb</span></div>
             </div>
           </div>
 
-          <div class="metric">Sulfur Dioxide: <strong class="val-so2">10 ppb</strong>
+          <div class="metric">Sulfur Dioxide: <strong class="val-so2">0 ppb</strong>
             <div class="metric-bar-container">
               <progress id="bar-so2" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-so2">0 ppb</span></div>
             </div>
           </div>
 
-          <div class="metric">Volatile Organic Compounds: <strong class="val-voc">50 µg/m³</strong>
+          <div class="metric">Volatile Organic Compounds: <strong class="val-voc">0 µg/m³</strong>
             <div class="metric-bar-container">
               <progress id="bar-voc" value="0" max="100"></progress>
               <div class="metric-bar-label"><span id="text-voc">0 µg/m³</span></div>
@@ -126,8 +126,62 @@
   </ul>
 </div>
 
-
+<div id="tips1" class="tips-box1">
+  <div class="achievement-box">
+    <h3><i class='bxr  bx-trophy-star'  style='color:#0d0d0c'></i> Achievements</h3>
+    <p>Track your progress and milestones in improving your air quality awareness!</p>
+    <div class="achievement-card">
+      <div class="icon"><i class='bxr  bx-science'  style='color:#4e4f43'></i> </div>
+      <div class="text">
+        <h3>Air Quality Expert</h3>
+        <p>Completed comprehensive air analysis</p>
+      </div>
     </div>
+
+    <div class="achievement-card">
+      <div class="icon"><i class='bxr  bx-x-shield'  style='color:#4e4f43'></i> </div>
+      <div class="text">
+        <h3>Health Guardian</h3>
+        <p>Achieved excellent air quality score</p>
+      </div>
+    </div>
+
+ <div class="achievement-card">
+      <div class="icon"><i class='bxr  bx-leaf'  style='color:#4e4f43'></i> </div>
+      <div class="text">
+        <h4>Environment Advocate</h4>
+        <p>By being a true advocate</p>
+      </div>
+    </div>
+  </div>
+
+ <div class="recommendation-box">
+<h3><i class='bxr  bx-user-square'  style='color:#4e4f43'></i> Personal Recommendations</h3>
+    <p>Based on your inputs, here are some tailored tips to improve your air quality awareness and health:</p>
+
+    <div class="recommendation-card">
+      <div class="icon"><i class='bxr  bx-medical-kit'  style='color:#4e4f43'></i> </div>
+      <div class="text">
+        <h4>Health Protection</h4>
+        <p>Use public transport or carpool to reduce emissions.</p>
+        <p>Avoid using harsh chemical cleaners; opt for natural alternatives.</p>
+      </div>
+    </div>
+
+<div class="recommendation-card">
+      <div class="icon"><i class='bxr  bx-home-heart'  style='color:#4e4f43'></i>  </div>
+      <div class="text">
+        <h4>Indoor Air Quality</h4>
+        <p>Ventilate your home regularly to reduce indoor pollutants.</p>
+        <p>Use air purifiers with HEPA filters to improve indoor air quality.</p
+      </div>
+    </div>
+  </div>
+  </div>
+
+  
+</div>
+
   <script>
     const pollutants = [
       { id: 'pm25', question: 'Is the air around you hazy or clear?', technical: 'Fine Particulate Matter (PM2.5)', value: 15, unit: 'µg/m³', maxValue: 100 },
@@ -184,9 +238,9 @@ info.innerHTML = `
 `;
 
 
-        const spanValue = document.createElement('span');
-        spanValue.id = `val-${p.id}`;
-        spanValue.innerText = '';  // blank
+       const spanValue = document.createElement('span');
+spanValue.id = `val-${p.id}`;
+spanValue.innerText = `${p.value} ${p.unit}`; 
 
 
         const emojiSpan = document.createElement('span');
@@ -206,15 +260,15 @@ info.innerHTML = `
         inputRange.step = 1;
         inputRange.value = p.value;
 
-        inputRange.oninput = (e) => {
-          const v = Number(e.target.value);
-          p.value = v;
-          document.getElementById(`val-${p.id}`).innerText = '';  // blank
-          document.getElementById(`emoji-${p.id}`).innerText = getEmoji(v / p.maxValue);
+       inputRange.oninput = (e) => {
+  const v = Number(e.target.value);
+  p.value = v;
+  document.getElementById(`val-${p.id}`).innerText = `${v} ${p.unit}`;
+  document.getElementById(`emoji-${p.id}`).innerText = getEmoji(v / p.maxValue);
 
-          updateLiveAnalysis();
-          barLiveAnalysis();
-        };
+  updateLiveAnalysis();
+  barLiveAnalysis();
+};
 
         div.appendChild(header);
         div.appendChild(inputRange);
@@ -432,6 +486,50 @@ document.getElementById('check-btn').addEventListener('click', () => {
   `;
 });
 </script>
+
+<script>
+document.getElementById('check-btn').addEventListener('click', () => {
+  // 1️⃣ Hide the analyze button
+  const analyzeBtn = document.getElementById('check-btn');
+  analyzeBtn.style.display = 'none';
+
+  // 2️⃣ Freeze sliders and hide thumbs
+  document.querySelectorAll('.pollutant input[type="range"]').forEach(slider => {
+    slider.disabled = true;
+    slider.classList.add('frozen');
+    slider.style.pointerEvents = 'none';
+
+    const val = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.background = `linear-gradient(to right, black ${val}%, #e8e9f0 ${val}%)`;
+  });
+
+  // 3️⃣ Keep original animation
+  document.querySelectorAll('.pollutant').forEach((el, i) => {
+    el.style.animationDelay = `${i * 0.2}s`;
+  });
+
+  // 4️⃣ Show tips1 when analyzed
+  // 4️⃣ Show tips1 when analyzed, hide original tips
+document.getElementById('tips').style.display = 'none';
+document.getElementById('tips1').style.display = 'block';
+
+  // 5️⃣ Add “Check Again” button below the grid container
+  const gridContainer = document.querySelector('.input-tips-grid');
+  if (!document.getElementById('check-again-btn')) {
+    const againBtn = document.createElement('button');
+    againBtn.id = 'check-again-btn';
+    againBtn.textContent = "⚡ Check Again";
+
+    gridContainer.insertAdjacentElement('afterend', againBtn);
+
+    // Refresh page when clicked
+    againBtn.addEventListener('click', () => {
+      location.reload();
+    });
+  }
+});
+</script>
+
 
   </body>
 </html>
