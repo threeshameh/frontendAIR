@@ -189,20 +189,55 @@
 
   <script>
     const pollutants = [
-      { id: 'pm25', question: 'Is the air around you hazy or clear?', technical: 'Fine Particulate Matter (PM2.5)', value: 15, unit: 'µg/m³', maxValue: 100 },
-      { id: 'pm10', question: 'Do you notice a lot of dust outside?', technical: 'Coarse Particulate Matter (PM10)', value: 25, unit: 'µg/m³', maxValue: 150 },
-      { id: 'nox', question: 'Are there many vehicles or factories nearby?', technical: 'Nitrogen Oxides (NOx)', value: 21, unit: 'ppb', maxValue: 100 },
-      { id: 'so2', question: 'Do you smell something like burning or matches?', technical: 'Sulfur Dioxide', value: 10, unit: 'ppb', maxValue: 75 },
-      { id: 'voc', question: 'Do you use a lot of cleaning sprays, paints, or air fresheners?', technical: 'Volatile Organic Compounds (VOCs)', value: 50, unit: 'µg/m³', maxValue: 200 },
-      { id: 'co', question: 'Are you near traffic or enclosed garages?', technical: 'Carbon Monoxide', value: 1, unit: 'ppm', maxValue: 10 },
-      { id: 'no2',question: 'Do you often smell strong exhaust fumes nearby?',technical: 'Nitrogen Dioxide (NO₂)',value: 25,unit: 'ppb',maxValue: 100}
+      { id: 'pm25', question: 'Is the air around you hazy or clear?', technical: 'Fine Particulate Matter (PM2.5)', value: 0, unit: 'µg/m³', maxValue: 150 },
+      { id: 'pm10', question: 'Do you notice a lot of dust outside?', technical: 'Coarse Particulate Matter (PM10)', value: 0, unit: 'µg/m³', maxValue: 250 },
+      { id: 'nox', question: 'Are there many vehicles or factories nearby?', technical: 'Nitrogen Oxides (NOx)', value: 0, unit: 'ppb', maxValue: 300 },
+      { id: 'so2', question: 'Do you smell something like burning or matches?', technical: 'Sulfur Dioxide', value: 0, unit: 'ppb', maxValue: 200 },
+      { id: 'voc', question: 'Do you use a lot of cleaning sprays, paints, or air fresheners?', technical: 'Volatile Organic Compounds (VOCs)', value: 0, unit: 'ppb', maxValue: 300 },
+      { id: 'co', question: 'Are you near traffic or enclosed garages?', technical: 'Carbon Monoxide', value: 0, unit: 'ppm', maxValue: 20 },
+      { id: 'no2',question: 'Do you often smell strong exhaust fumes nearby?',technical: 'Nitrogen Dioxide (NO₂)',value: 0,unit: 'ppb',maxValue: 200}
     ];
 
-    function getEmoji(percent) {
-      if (percent < 0.33) return '😊';
-      else if (percent < 0.66) return '🙂';
-      else return '😷';
-    }
+    function getEmoji(pollutant, value) {
+  let thresholds;
+
+  // Define thresholds per pollutant (units: µg/m³ or ppm/ppb as noted)
+  switch (pollutant.toLowerCase()) {
+    case 'pm2.5':
+      thresholds = { excellent: 15, fair: 35 }; // µg/m³
+      break;
+    case 'pm10':
+      thresholds = { excellent: 45, fair: 100 }; // µg/m³
+      break;
+    case 'no2':
+      thresholds = { excellent: 25, fair: 75 }; // µg/m³
+      break;
+    case 'so2':
+      thresholds = { excellent: 40, fair: 100 }; // µg/m³
+      break;
+    case 'co':
+      thresholds = { excellent: 4, fair: 10 }; // ppm
+      break;
+    case 'voc':
+      thresholds = { excellent: 50, fair: 200 }; // ppb
+      break;
+    case 'nox': // extra pollutant you likely meant
+      thresholds = { excellent: 50, fair: 150 }; // µg/m³ (approximate)
+      break;
+    default:
+      thresholds = { excellent: 50, fair: 100 }; // fallback for unknowns
+  }
+
+  // Apply threshold logic (WHO/EPA-based)
+  if (value <= thresholds.excellent) {
+    return '😊'; // Excellent air quality
+  } else if (value <= thresholds.fair) {
+    return '🙂'; // Fair / moderate air quality
+  } else {
+    return '😷'; // Poor / unhealthy air quality
+  }
+}
+
 
     function getTooltipText(id) {
   switch (id) {
@@ -254,7 +289,8 @@ spanValue.innerText = `${p.value} ${p.unit}`;
         const emojiSpan = document.createElement('span');
         emojiSpan.id = `emoji-${p.id}`;
         emojiSpan.className = 'emoji';
-        emojiSpan.innerText = getEmoji(p.value / p.maxValue);
+      emojiSpan.innerText = getEmoji(p.id, p.value);
+
 
         header.appendChild(info);
         header.appendChild(spanValue);
@@ -272,7 +308,8 @@ spanValue.innerText = `${p.value} ${p.unit}`;
   const v = Number(e.target.value);
   p.value = v;
   document.getElementById(`val-${p.id}`).innerText = `${v} ${p.unit}`;
-  document.getElementById(`emoji-${p.id}`).innerText = getEmoji(v / p.maxValue);
+  document.getElementById(`emoji-${p.id}`).innerText = getEmoji(p.id, v);
+
 
   updateLiveAnalysis();
   barLiveAnalysis();
@@ -289,50 +326,23 @@ spanValue.innerText = `${p.value} ${p.unit}`;
     }
 
     function updateLiveAnalysis() {
-      pollutants.forEach(p => {
-        const elem = document.querySelector(`.val-${p.id}`);
-        if (elem) elem.innerText = `${p.value} ${p.unit}`;
-      });
+  // Update displayed pollutant values beside sliders
+  pollutants.forEach(p => {
+    const elem = document.querySelector(`.val-${p.id}`);
+    if (elem) elem.innerText = `${p.value} ${p.unit}`;
+  });
 
-      let totalPercent = 0;
-      pollutants.forEach(p => totalPercent += (p.value / p.maxValue));
-      const avgPercent = totalPercent / pollutants.length;
-      const score = Math.round((1 - avgPercent) * 100);
+  // Just display the current values — no computed "score"
+  const emojiElem = document.querySelector('.score-info .emoji');
+  const h3Elem = document.querySelector('.score-info h3');
+  const noteElem = document.querySelector('.score-info .note');
 
-      const scoreElem = document.querySelector('.score-value');
-      if (scoreElem) scoreElem.innerText = `${score}/100`;
-
-      const emojiElem = document.querySelector('.score-info .emoji');
-      const h3Elem = document.querySelector('.score-info h3');
-      const noteElem = document.querySelector('.score-info .note');
-      const percent = score / 100;
-      if (percent > 0.8) {
-  noteElem.innerText = "Perfect weather to do outdoor activities!";
-} else if (percent > 0.5) {
-  noteElem.innerText = "Good air today — enjoy some time outside.";
-} else if (percent > 0.3) {
-  noteElem.innerText = "Moderate air quality. Sensitive groups should take caution.";
-} else {
-  noteElem.innerText = "Poor air quality — better to stay indoors today.";
+  if (h3Elem) h3Elem.innerText = "Awaiting Prediction";
+  if (emojiElem) emojiElem.innerText = "🤖";
+  if (noteElem) noteElem.innerText = "Click 'Check' to see model prediction.";
 }
-      if (percent > 0.8) {
-        if (h3Elem) h3Elem.innerText = "Excellent Air Quality";
-        if (emojiElem) emojiElem.innerText = "😊";
-      } else if (percent > 0.5) {
-        if (h3Elem) h3Elem.innerText = "Good Air Quality";
-        if (emojiElem) emojiElem.innerText = "🙂";
-      } else if (percent > 0.3) {
-        if (h3Elem) h3Elem.innerText = "Moderate Air Quality";
-        if (emojiElem) emojiElem.innerText = "😐";
-      } else {
-        if (h3Elem) h3Elem.innerText = "Poor Air Quality";
-        if (emojiElem) emojiElem.innerText = "😷";
-      }
 
-      
-    }
-
-   function barLiveAnalysis() {
+function barLiveAnalysis() {
   pollutants.forEach(p => {
     const bar = document.getElementById(`bar-${p.id}`);
     const label = document.getElementById(`text-${p.id}`);
