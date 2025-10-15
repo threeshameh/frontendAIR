@@ -92,7 +92,12 @@
               <div class="metric-bar-label"><span id="text-co">0 ppm</span></div>
             </div>
           </div>
-
+<div class="metric">Nitrogen Dioxide (NO₂): <strong class="val-no2">0 ppb</strong>
+  <div class="metric-bar-container">
+    <progress id="bar-no2" value="0" max="100"></progress>
+    <div class="metric-bar-label"><span id="text-no2">0 ppb</span></div>
+  </div>
+</div>
         </div>
       </div>
     </section>
@@ -189,7 +194,8 @@
       { id: 'nox', question: 'Are there many vehicles or factories nearby?', technical: 'Nitrogen Oxides (NOx)', value: 21, unit: 'ppb', maxValue: 100 },
       { id: 'so2', question: 'Do you smell something like burning or matches?', technical: 'Sulfur Dioxide', value: 10, unit: 'ppb', maxValue: 75 },
       { id: 'voc', question: 'Do you use a lot of cleaning sprays, paints, or air fresheners?', technical: 'Volatile Organic Compounds (VOCs)', value: 50, unit: 'µg/m³', maxValue: 200 },
-      { id: 'co', question: 'Are you near traffic or enclosed garages?', technical: 'Carbon Monoxide', value: 1, unit: 'ppm', maxValue: 10 }
+      { id: 'co', question: 'Are you near traffic or enclosed garages?', technical: 'Carbon Monoxide', value: 1, unit: 'ppm', maxValue: 10 },
+      { id: 'no2',question: 'Do you often smell strong exhaust fumes nearby?',technical: 'Nitrogen Dioxide (NO₂)',value: 25,unit: 'ppb',maxValue: 100}
     ];
 
     function getEmoji(percent) {
@@ -206,6 +212,8 @@
     case 'so2': return 'Produced by burning coal or oil.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 20 ppb</span>';
     case 'voc': return 'Emitted by sprays, paints, and cleaners.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 200 µg/m³</span>';
     case 'co': return 'From traffic and enclosed garages.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 9 ppm</span>';
+    case 'no2': return 'A harmful gas mainly from vehicle exhaust and industrial emissions.<br><span style="color:#4fa3ff;font-weight:500;">Ideal: Below 40 ppb</span>';
+
     default: return '';
   }
 }
@@ -515,12 +523,15 @@ document.getElementById('tips1').style.display = 'block';
 
   // 5️⃣ Add “Check Again” button below the grid container
   const gridContainer = document.querySelector('.input-tips-grid');
+const inputCard = document.querySelector('.input-card');
+
   if (!document.getElementById('check-again-btn')) {
     const againBtn = document.createElement('button');
     againBtn.id = 'check-again-btn';
     againBtn.textContent = "⚡ Check Again";
 
-    gridContainer.insertAdjacentElement('afterend', againBtn);
+    inputCard.appendChild(againBtn);
+
 
     // Refresh page when clicked
     againBtn.addEventListener('click', () => {
